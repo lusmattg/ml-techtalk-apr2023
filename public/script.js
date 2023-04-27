@@ -1,12 +1,19 @@
 const socket = io();
 socket.on('ping',function() { console.log('pong')});
 socket.on('s-updatecursors', function(msg) {
-    console.log(knownUsers);
     state.cursors = [];
     for (const m in msg) {
         if (msg[m].sentTime && msg[m].cursorName) {
           if (!knownUsers[msg[m].cursorName]) knownUsers[msg[m].cursorName] = {delta: []}
-          knownUsers[msg[m].cursorName].delta.push(Date.now()-msg[m].sentTime);
+          let lastSentTime = -1;
+          if (knownUsers[msg[m].cursorName].delta.length) lastSentTime = knownUsers[msg[m].cursorName].delta[knownUsers[msg[m].cursorName].delta.length-1];
+          if (lastSentTime < 0 || msg[m].sentTime != lastSentTime) {
+            console.log(lastSentTime)
+            knownUsers[msg[m].cursorName].delta.push(Date.now()-msg[m].sentTime);
+          }
+          else {
+            console.log('person hasnt moved')
+          }
         }
         else {
             console.log(msg[m])
