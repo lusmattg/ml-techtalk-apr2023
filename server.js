@@ -21,6 +21,7 @@ io.on('connection', (socket) => {
   users[socket.client.id].socket = socket;
   users[socket.client.id].name = socket.client.id;
   users[socket.client.id].nickname = 'User ' + userCount;
+  users[socket.client.id].cursorCol = '#' + Math.floor(Math.random()*16777215).toString(16);
   console.log('a user connected: ' + socket.client.id);
   io.emit('chat message', socket.client.id + ' connected');
   socket.on('disconnect', () => {
@@ -33,23 +34,28 @@ io.on('connection', (socket) => {
     io.emit('chat message', socket.client.id + ':' + msg);
   });
   socket.on('c-updatecursor', (msg) => {
-    console.log('got cursor update from ', socket.client.id);
-    users[socket.client.id].cursorPos = msg;
+    console.log('got cursor update :', msg);
+    users[socket.client.id].cursorPos = msg.pos;
+    users[socket.client.id].lastSentTime = msg.time;
+
+    const cursors = []
+    for (const u in users) {
+      cursors.push({user: users[u].name, 
+                    cursorPos: users[u].cursorPos,
+                    cursorCol: users[u].cursorCol,
+                    cursorName: users[u].nickname,
+                    sentTime: users[u].lastSentTime
+                  });
+    }
+    //console.log('transmitting ', cursors)
+    io.emit('s-updatecursors',cursors);
+  
   });
 });
 
 
 function tick() {
-  //send hand updates
-  const cursors = []
-  for (const u in users) {
-    cursors.push({user: users[u].name, 
-                  cursorPos: users[u].cursorPos,
-                  cursorCol: '#ffffff',
-                  cursorName: users[u].nickname});
-  }
-  //console.log('transmitting ', cursors)
-  io.emit('s-updatecursors',cursors);
+  //todo:
   setTimeout(tick,500);
 }
 
