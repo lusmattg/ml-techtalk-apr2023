@@ -62,7 +62,7 @@ function pingpong() {
 }
   
 
-const PORT = 3000;
+const PORT = 80;
 server.listen(PORT, () => {
   console.log('listening on *:'+PORT);
 });
