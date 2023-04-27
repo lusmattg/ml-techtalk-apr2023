@@ -34,9 +34,7 @@ io.on('connection', (socket) => {
     io.emit('chat message', socket.client.id + ':' + msg);
   });
   socket.on('c-updatecursor', (msg) => {
-    console.log('got cursor update :', msg);
     users[socket.client.id].cursorPos = msg.pos;
-    users[socket.client.id].lastSentTime = msg.time;
 
     const cursors = []
     for (const u in users) {
@@ -44,7 +42,6 @@ io.on('connection', (socket) => {
                     cursorPos: users[u].cursorPos,
                     cursorCol: users[u].cursorCol,
                     cursorName: users[u].nickname,
-                    sentTime: users[u].lastSentTime
                   });
     }
     //console.log('transmitting ', cursors)

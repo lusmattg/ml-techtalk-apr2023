@@ -3,21 +3,6 @@ socket.on('ping',function() { console.log('pong')});
 socket.on('s-updatecursors', function(msg) {
     state.cursors = [];
     for (const m in msg) {
-        if (msg[m].sentTime && msg[m].cursorName) {
-          if (!knownUsers[msg[m].cursorName]) knownUsers[msg[m].cursorName] = {delta: []}
-          let lastSentTime = -1;
-          if (knownUsers[msg[m].cursorName].delta.length) lastSentTime = knownUsers[msg[m].cursorName].delta[knownUsers[msg[m].cursorName].delta.length-1];
-          if (lastSentTime < 0 || msg[m].sentTime != lastSentTime) {
-            console.log(lastSentTime)
-            knownUsers[msg[m].cursorName].delta.push(Date.now()-msg[m].sentTime);
-          }
-          else {
-            console.log('person hasnt moved')
-          }
-        }
-        else {
-            console.log(msg[m])
-        }
         state.cursors.push(msg[m]);
     }
 });
@@ -49,11 +34,7 @@ function render() {
         for (c of state.cursors) {
             if (c && c.cursorPos) {
               ctx.fillStyle = c.cursorCol;
-              let latency = '';
-              if (knownUsers[c.cursorName]) {
-                latency = ' (' + (knownUsers[c.cursorName].delta[knownUsers[c.cursorName].delta.length-1]) + ')';
-              }
-              ctx.fillText(c.cursorName + latency,c.cursorPos[0],c.cursorPos[1])
+              ctx.fillText(c.cursorName,c.cursorPos[0],c.cursorPos[1])
               //ctx.fillRect(c.cursorPos[0],c.cursorPos[1],16,16);
             }
         }
