@@ -33,6 +33,7 @@ function render() {
     if (state.cursors) {
         for (c of state.cursors) {
             if (c && c.cursorPos) {
+              ctx.font = "20px Arial";
               ctx.fillStyle = c.cursorCol;
               ctx.fillText(c.cursorName,c.cursorPos[0],c.cursorPos[1])
               //ctx.fillRect(c.cursorPos[0],c.cursorPos[1],16,16);
